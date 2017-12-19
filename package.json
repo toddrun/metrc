@@ -1,0 +1,27 @@
+{
+  "name": "metrc_wrapper",
+  "version": "1.0.0",
+  "description": "Interact with the Metrc API from your Node application",
+  "main": "lib/Metrc.js",
+  "scripts": {
+    "test": "mocha --recursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/toddrun/metrc_wrapper.git"
+  },
+  "keywords": [
+    "metrc"
+  ],
+  "author": "toddrun",
+  "license": "MIT",
+  "homepage": "https://bitbucket.org/toddrun/metrc_wrapper#readme",
+  "devDependencies": {
+    "nock": "^9.1.4",
+    "sinon": "^4.1.3"
+  },
+  "dependencies": {
+    "request": "^2.83.0",
+    "util": "^0.10.3"
+  }
+}
