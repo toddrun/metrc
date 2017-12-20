@@ -47,10 +47,14 @@ router.get('/all', function(req, res, next) {
   })
 })
 
-router.post('/submit/create', function(req, res, next) {
-  const payload = JSON.parse(req.body.payload)
-  metrcPackages.create(payload).then((results) => {
-    res.send(render(results))
+router.get('/fetch', function(req, res, next) {
+  res.render('fetchPackageForm.html')
+})
+
+router.post('/submit/fetch', function(req, res, next) {
+  const identifier = req.body.identifier
+  metrcPackages.fetch(identifier).then((results) => {
+    res.send(render(results));
   })
 })
 
@@ -58,5 +62,11 @@ router.get('/create', function(req, res, next) {
   res.render('createPackageForm.html')
 })
 
+router.post('/submit/create', function(req, res, next) {
+  const payload = JSON.parse(req.body.payload)
+  metrcPackages.create(payload).then((results) => {
+    res.send(render(results))
+  })
+})
 
 module.exports = router;

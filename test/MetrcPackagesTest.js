@@ -44,6 +44,21 @@ describe('Packages', () => {
     })
   })
   
+  describe('fetch', () => {
+    const id = 17
+    it('calls get with the id', (done) => {
+      mockMetrc.expects('get').
+        withArgs('/packages/v1/' + id).
+        resolves( {'Id': id, 'Label': 'ABCD1234'} )
+     
+      metrcPackages.fetch(id).then((results) => {
+        assert.equal(results.Id, id)
+        assert.equal(results.Label, 'ABCD1234')
+        done();
+      })
+    })
+  })
+  
   describe('all', () => {
     beforeEach(() => {
       mockMetrc.expects('get').withArgs('/packages/v1/active').resolves([{"active": 1}])

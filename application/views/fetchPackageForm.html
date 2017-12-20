@@ -1,0 +1,12 @@
+{% extends './layout.html' %}
+
+{% block body %}
+  <form method='post' action='/packages/submit/fetch'>
+    <div>
+      <label for="identifier">Enter Package Id or Label: </label><input type="text" name="identifier" /> 
+    </div>
+    <div>
+      <input type="submit" value="Click Me" />
+    </div>
+  </form>
+{% endblock %}
