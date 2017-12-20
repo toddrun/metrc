@@ -6,21 +6,10 @@ var router = express.Router();
 const MetrcPackages = require('../../lib/MetrcPackages')
 const metrc = require('./helpers/MetrcFactory').getNew()
 const metrcPackages = new MetrcPackages(metrc)
-
-const _ = require('lodash')
+const renderer = require('./helpers/ResultRenderer')
 
 const render = function(results) {
-  const packages = JSON.parse(results);
-  let html = results;
-  if (_.isArray(packages)) {
-    const sorted = _.sortBy(packages, ["Label"]);
-    const dived = sorted.map((sortedPackage) => { 
-      return '<div><b>*</b>&nbsp;' + JSON.stringify(sortedPackage) + '</div>'; 
-    })  
-    html = dived.join("")
-  } 
-  
-  return '<html><body>' + html + '</body></html>'
+  return renderer.render(results)
 }
 
 router.get('/active', function(req, res, next) {
