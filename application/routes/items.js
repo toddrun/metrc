@@ -18,5 +18,11 @@ router.get('/active', function(req, res, next) {
   })           
 })
 
+router.get('/categories', function(req, res, next) {
+  metrcItems.categories().then((results) => {
+    res.send(render(results));
+  })           
+})
+
 
 module.exports = router;
