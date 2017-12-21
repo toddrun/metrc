@@ -49,11 +49,25 @@ describe('MetrcItems', () => {
     })
   })
   
+  describe('delete', () => {
+    it('calls Metrc.delete and passed id to endpoint', (done) => {
+      const id = 7;
+      mockMetrc.expects('delete').
+        withArgs('/items/v1/' + id).
+        resolves({})
+      
+      metrcItems.delete(id).then(() => {
+        mockMetrc.verify();
+        done();
+      })
+    })
+  })
+  
   describe('active', () => {
     it('calls Metrc.get with active items endpoint', (done) => {
-      mockMetrc.expects('get')
-        .withArgs('/items/v1/active')
-        .resolves([])
+      mockMetrc.expects('get').
+        withArgs('/items/v1/active').
+        resolves([])
       
       metrcItems.active().then(() => {
         mockMetrc.verify()

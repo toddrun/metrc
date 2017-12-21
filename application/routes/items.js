@@ -35,4 +35,15 @@ router.post('/submit/item', function(req, res, next) {
   })
 })
 
+router.get('/delete', function(req, res, next) {
+  res.render('deleteItemForm.html')
+})
+
+router.post('/delete/item', function(req, res, next) {
+  const id = req.body.id
+  metrcItems.delete(id).then(() => {
+    res.send("Deleted item " + id)
+  })
+})
+
 module.exports = router;

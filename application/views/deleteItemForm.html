@@ -1,0 +1,12 @@
+{% extends './layout.html' %}
+
+{% block body %}
+  <form method='post' action='/items/delete/item'>
+    <div>
+      <label for="id">Enter Item Id: </label><input type="text" name="id" /> 
+    </div>
+    <div>
+      <input type="submit" value="Click Me" />
+    </div>
+  </form>
+{% endblock %}
