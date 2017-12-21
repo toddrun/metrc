@@ -50,4 +50,30 @@ router.post('/delete/item', function(req, res, next) {
   })
 })
 
+router.get('/fetch', function(req, res, next) {
+  res.render('fetchItemForm.html')
+})
+
+router.post('/submit/fetch', function(req, res, next) {
+  const id = req.body.id
+  metrcItems.fetch(id).then((results) => {
+    res.send(render(results));
+  }).catch((err) => {
+    res.send(err)
+  })
+})
+
+router.get('/update', function(req, res, next) {
+  res.render('updateItemForm.html')
+})
+
+router.post('/submit/update', function(req, res, next) {
+  const payload = JSON.parse(req.body.payload)
+  metrcItems.update(payload).then((results) => {
+    res.send(render(results));
+  }).catch((err) => {
+    res.send(err)
+  })
+})
+
 module.exports = router;

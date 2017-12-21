@@ -14,6 +14,20 @@ describe('MetrcItems', () => {
   beforeEach(() => { mockMetrc = sinon.mock(metrc); })
   afterEach(() => { mockMetrc.restore(); })
   
+  describe('fetch', () => {
+    const id = 212
+    it('calls get with the id', (done) => {
+      mockMetrc.expects('get').
+        withArgs('/items/v1/' + id).
+        resolves( {'Id': id, 'Name': 'My Buds'} )
+     
+      metrcItems.fetch(id).then((results) => {
+        assert.equal(results.Id, id)
+        done();
+      })
+    })
+  })
+  
   describe('create', () => {
     const itemName = "Buds - Buddly"
     const payload = { "Name": itemName }
@@ -46,6 +60,26 @@ describe('MetrcItems', () => {
        assert.equal(newItem.Id, 7)
        done();
      }).catch((err) => {console.log(err)})
+    })
+  })
+  
+  describe('update', () => {
+    const id = 420
+    const payload = { 'Id': id, 'Name': 'Buddly Buds' }
+    
+    it('posts item to update endpoint then fetches the item', (done) => {
+      mockMetrc.expects('post').
+        withArgs('/items/v1/update', payload).
+        resolves("OK")
+      mockMetrc.expects('get').
+        withArgs('/items/v1/' + id).
+        resolves(payload)
+     
+     metrcItems.update(payload).then((newPackage) => {
+       mockMetrc.verify();
+       assert.equal(newPackage, payload)
+       done();
+     })
     })
   })
   
