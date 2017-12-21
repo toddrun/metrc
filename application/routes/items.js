@@ -24,5 +24,15 @@ router.get('/categories', function(req, res, next) {
   })           
 })
 
+router.get('/create', function(req, res, next) {
+  res.render('createItemForm.html')
+})
+
+router.post('/submit/item', function(req, res, next) {
+  const payload = JSON.parse(req.body.payload)
+  metrcItems.create(payload).then((results) => {
+    res.send(render(results))
+  })
+})
 
 module.exports = router;

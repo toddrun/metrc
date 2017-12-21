@@ -1,0 +1,23 @@
+{% extends './layout.html' %}
+
+{% block body %}
+  <form method='post' action='/items/submit/item'>
+    <div>
+      <textarea name="payload" rows="20" cols="60">
+        {
+          "ItemCategory": "Buds",
+          "Name": "Buds Item",
+          "UnitOfMeasure": "Ounces",
+          "Strain": "Spring Hill Kush",
+          "UnitThcContent": null,
+          "UnitThcContentUnitOfMeasure": null,
+          "UnitWeight": null,
+          "UnitWeightUnitOfMeasure": null
+        }
+      </textarea>      
+    </div>
+    <div>
+      <input type="submit" value="Create Item" />
+    </div>
+  </form>
+{% endblock %}
