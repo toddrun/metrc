@@ -32,6 +32,8 @@ router.post('/submit/item', function(req, res, next) {
   const payload = JSON.parse(req.body.payload)
   metrcItems.create(payload).then((results) => {
     res.send(render(results))
+  }).catch((err) => {
+    res.send(err)
   })
 })
 
@@ -43,6 +45,8 @@ router.post('/delete/item', function(req, res, next) {
   const id = req.body.id
   metrcItems.delete(id).then(() => {
     res.send("Deleted item " + id)
+  }).catch((err) => {
+    res.send(err)
   })
 })
 

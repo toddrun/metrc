@@ -44,6 +44,8 @@ router.post('/submit/fetch', function(req, res, next) {
   const identifier = req.body.identifier
   metrcPackages.fetch(identifier).then((results) => {
     res.send(render(results));
+  }).catch((err) => {
+    res.send(err)
   })
 })
 
@@ -55,6 +57,8 @@ router.post('/submit/create', function(req, res, next) {
   const payload = JSON.parse(req.body.payload)
   metrcPackages.create(payload).then((results) => {
     res.send(render(results))
+  }).catch((err) => {
+    res.send(err)
   })
 })
 
