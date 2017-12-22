@@ -1,0 +1,21 @@
+{% extends './layout.html' %}
+
+{% block body %}
+  <form method='post' action='/packages/submit/adjust'>
+    <div>
+      <textarea name="payload" rows="20" cols="60">
+        {
+          "Label": "ABCDEF012345670000010041",
+          "Quantity": -2.0,
+          "UnitOfMeasure": "Ounces",
+          "AdjustmentReason": "Drying",
+          "AdjustmentDate": "2015-12-15",
+          "ReasonNote": "Drying"
+        }
+      </textarea>      
+    </div>
+    <div>
+      <input type="submit" value="Adjust Package" />
+    </div>
+  </form>
+{% endblock %}

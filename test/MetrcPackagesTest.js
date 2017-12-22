@@ -44,6 +44,36 @@ describe('Packages', () => {
     })
   })
   
+  describe('createTesting', () => {
+    const tag = "ABCDEFG900009"
+    const payload = { "Tag": tag }
+    
+    it('calls Metrc.post with packages create/testing endpoint', (done) => {
+      mockMetrc.expects('post').
+        withArgs('/packages/v1/create/testing', payload).
+        resolves("OK")
+      mockMetrc.expects('get').
+        withArgs('/packages/v1/' + tag).
+        resolves([])
+     
+     metrcPackages.createTesting(payload).then((newPackage) => {
+       mockMetrc.verify();
+       done();
+     })
+    })
+    
+    it('gets the Package after creation using the Tag', (done) => {
+      const createdPackage = { "Label": tag }
+      mockMetrc.expects('post').resolves("OK")
+      mockMetrc.expects('get').resolves(createdPackage)
+     
+     metrcPackages.createTesting(payload).then((newPackage) => {
+       assert.equal(newPackage, createdPackage)
+       done();
+     })
+    })
+  })
+  
   describe('fetch', () => {
     const id = 17
     it('calls get with the id', (done) => {
@@ -52,8 +82,47 @@ describe('Packages', () => {
         resolves( {'Id': id, 'Label': 'ABCD1234'} )
      
       metrcPackages.fetch(id).then((results) => {
+        mockMetrc.verify();
         assert.equal(results.Id, id)
         assert.equal(results.Label, 'ABCD1234')
+        done();
+      })
+    })
+  })
+  
+  describe('changeItem', () => {
+    const label = "ABC123"
+    const payload = { Label: label, Item: 'Different Stuff'}
+    it('posts the payload then fetches the Package using the label', (done) => {
+      mockMetrc.expects('post').
+        withArgs('/packages/v1/change/item').
+        resolves( payload )
+      mockMetrc.expects('get').
+        withArgs('/packages/v1/' + label).
+        resolves(payload)
+     
+      metrcPackages.changeItem(payload).then((results) => {
+        mockMetrc.verify();
+        assert.equal(results, payload)
+        done();
+      })
+    })
+  })
+  
+  describe('adjust', () => {
+    const label = "ABC123"
+    const payload = { Label: label, Item: 'Different Stuff'}
+    it('posts the payload then fetches the Package using the label', (done) => {
+      mockMetrc.expects('post').
+        withArgs('/packages/v1/adjust').
+        resolves( payload )
+      mockMetrc.expects('get').
+        withArgs('/packages/v1/' + label).
+        resolves(payload)
+     
+      metrcPackages.adjust(payload).then((results) => {
+        mockMetrc.verify();
+        assert.equal(results, payload)
         done();
       })
     })
@@ -144,6 +213,21 @@ describe('Packages', () => {
       
       metrcPackages.onhold().then((results) => {
         assert.equal(results, payload)
+        done()
+      })
+    })
+  })
+  
+  describe('types', () => {
+    it('gets and returns payload from package types endpoint', (done) => {
+      const typeArray = ["Product", "ImmaturePlant", "VegetativePlant"]
+      mockMetrc.expects('get')
+        .withArgs('/packages/v1/types')
+        .resolves(typeArray)
+      
+      metrcPackages.types().then((results) => {
+        mockMetrc.verify()
+        assert.deepEqual(typeArray, results)
         done()
       })
     })

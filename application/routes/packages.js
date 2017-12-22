@@ -30,6 +30,12 @@ router.get('/onhold', function(req, res, next) {
   });          
 })
 
+router.get('/types', function(req, res, next) {
+  metrcPackages.types().then((results) => {
+    res.send(render(results));
+  })          
+})
+
 router.get('/all', function(req, res, next) {
   metrcPackages.all().then((results) => {
     res.send(render(results));
@@ -56,6 +62,32 @@ router.get('/create', function(req, res, next) {
 router.post('/submit/create', function(req, res, next) {
   const payload = JSON.parse(req.body.payload)
   metrcPackages.create(payload).then((results) => {
+    res.send(render(results))
+  }).catch((err) => {
+    res.send(err)
+  })
+})
+
+router.get('/changeItem', function(req, res, next) {
+  res.render('changeItemPackageForm.html')
+})
+
+router.post('/submit/changeItem', function(req, res, next) {
+  const payload = JSON.parse(req.body.payload)
+  metrcPackages.changeItem(payload).then((results) => {
+    res.send(render(results))
+  }).catch((err) => {
+    res.send(err)
+  })
+})
+
+router.get('/adjust', function(req, res, next) {
+  res.render('adjustPackageForm.html')
+})
+
+router.post('/submit/adjust', function(req, res, next) {
+  const payload = JSON.parse(req.body.payload)
+  metrcPackages.adjust(payload).then((results) => {
     res.send(render(results))
   }).catch((err) => {
     res.send(err)
