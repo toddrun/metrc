@@ -1,0 +1,12 @@
+{% extends './layout.html' %}
+
+{% block body %}
+  <form method='post' action='/strains/submit/fetch'>
+    <div>
+      <label for="id">Enter Strain Id: </label><input type="text" name="id" /> 
+    </div>
+    <div>
+      <input type="submit" value="Fetch Strain" />
+    </div>
+  </form>
+{% endblock %}
