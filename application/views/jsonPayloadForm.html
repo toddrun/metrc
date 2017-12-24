@@ -1,0 +1,15 @@
+{% extends './layout.html' %}
+
+{% block body %}
+  <form method='post' action='{{submitUrl}}'>
+    <h3>
+      {{title}}
+    </h3>
+    <div>
+      <textarea name="payload" rows="20" cols="60">{{exampleRequest|json(2)}}</textarea>      
+    </div>
+    <div>
+      <input type="submit" value="{{submitLabel|default('Save')}}" />
+    </div>
+  </form>
+{% endblock %}

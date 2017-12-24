@@ -43,7 +43,12 @@ router.get('/all', function(req, res, next) {
 })
 
 router.get('/fetch', function(req, res, next) {
-  res.render('fetchPackageForm.html')
+  res.render('singleFieldForm.html', {
+    label: 'Enter Package Id',
+    submitUrl: '/packages/submit/fetch',
+    variableName: 'identifier',
+    submitLabel: 'Fetch Package'
+  })
 })
 
 router.post('/submit/fetch', function(req, res, next) {
@@ -56,7 +61,33 @@ router.post('/submit/fetch', function(req, res, next) {
 })
 
 router.get('/create', function(req, res, next) {
-  res.render('createPackageForm.html')
+  res.render('jsonPayloadForm.html', {
+    title: 'Create Package',
+    submitUrl: '/packages/submit/create',
+    submitLabel: 'Create Package',
+    exampleRequest: {
+      "Tag": "ABCDEF01234567000001",
+      "Item": "Buds",
+      "Quantity": 16.0,
+      "UnitOfMeasure": "Ounces",
+      "IsProductionBatch": true,
+      "ProductionBatchNumber": "PB-2017-12-19",
+      "ProductRequiresRemediation": false,
+      "ActualDate": "2017-12-19",
+      "Ingredients": [
+        {
+          "Package": "ABCDEF01234567000002",
+          "Quantity": 8.0,
+          "UnitOfMeasure": "Ounces"
+        },
+        {
+          "Package": "ABCDEF01234567000003",
+          "Quantity": 8.0,
+          "UnitOfMeasure": "Ounces"
+        }
+      ]
+    }
+  })
 })
 
 router.post('/submit/create', function(req, res, next) {
@@ -69,7 +100,15 @@ router.post('/submit/create', function(req, res, next) {
 })
 
 router.get('/changeItem', function(req, res, next) {
-  res.render('changeItemPackageForm.html')
+  res.render('jsonPayloadForm.html', {
+    title: 'Change Package\'s Item',
+    submitUrl: '/packages/submit/changeItem',
+    submitLabel: 'Change Item',
+    exampleRequest: {
+      "Label": "ABCDEF01234567000001",
+      "Item": "Buds - My Buddy"
+    }
+  })
 })
 
 router.post('/submit/changeItem', function(req, res, next) {
@@ -82,7 +121,19 @@ router.post('/submit/changeItem', function(req, res, next) {
 })
 
 router.get('/adjust', function(req, res, next) {
-  res.render('adjustPackageForm.html')
+  res.render('jsonPayloadForm.html', {
+    title: 'Adjust Package',
+    submitUrl: '/packages/submit/adjust',
+    submitLabel: 'Adjust Package',
+    exampleRequest: {
+      "Label": "ABCDEF012345670000010041",
+      "Quantity": -2.0,
+      "UnitOfMeasure": "Ounces",
+      "AdjustmentReason": "Drying",
+      "AdjustmentDate": "2015-12-15",
+      "ReasonNote": "Drying"
+    }
+  })
 })
 
 router.post('/submit/adjust', function(req, res, next) {

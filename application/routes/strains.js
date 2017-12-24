@@ -19,7 +19,19 @@ router.get('/active', function(req, res, next) {
 })
 
 router.get('/create', function(req, res, next) {
-  res.render('createStrainForm.html')
+  res.render('jsonPayloadForm.html', {
+    title: 'Create Strain',
+    submitUrl: '/strains/submit/strain',
+    submitLabel: 'Create Strain',
+    exampleRequest: {
+      "Name": "Spring Hill Kush",
+      "TestingStatus": "None",
+      "ThcLevel": 0.1865,
+      "CbdLevel": 0.1075,
+      "IndicaPercentage": 25.0,
+      "SativaPercentage": 75.0
+    }
+  })
 })
 
 router.post('/submit/strain', function(req, res, next) {
@@ -32,7 +44,12 @@ router.post('/submit/strain', function(req, res, next) {
 })
 
 router.get('/delete', function(req, res, next) {
-  res.render('deleteStrainForm.html')
+  res.render('singleFieldForm.html', {
+    label: 'Enter Strain Id',
+    submitUrl: '/strains/delete/strain',
+    variableName: 'id',
+    sumbitLabel: 'Delete Strain'
+  })
 })
 
 router.post('/delete/strain', function(req, res, next) {
@@ -45,7 +62,12 @@ router.post('/delete/strain', function(req, res, next) {
 })
 
 router.get('/fetch', function(req, res, next) {
-  res.render('fetchStrainForm.html')
+  res.render('singleFieldForm.html', {
+    label: 'Enter Strain Id',
+    submitUrl: '/strains/submit/fetch',
+    variableName: 'id',
+    sumbitLabel: 'Fetch Strain'
+  })
 })
 
 router.post('/submit/fetch', function(req, res, next) {
@@ -58,7 +80,20 @@ router.post('/submit/fetch', function(req, res, next) {
 })
 
 router.get('/update', function(req, res, next) {
-  res.render('updateStrainForm.html')
+  res.render('jsonPayloadForm.html', {
+    title: 'Update Strain',
+    submitUrl: '/strains/submit/update',
+    submitLabel: 'Update Strain',
+    exampleRequest: {
+      "Id": 1,
+      "Name": "Spring Hill Kush",
+      "TestingStatus": "InHouse",
+      "ThcLevel": 0.1865,
+      "CbdLevel": 0.1075,
+      "IndicaPercentage": 25.0,
+      "SativaPercentage": 75.0
+    }
+  })
 })
 
 router.post('/submit/update', function(req, res, next) {

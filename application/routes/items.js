@@ -25,7 +25,21 @@ router.get('/categories', function(req, res, next) {
 })
 
 router.get('/create', function(req, res, next) {
-  res.render('createItemForm.html')
+  res.render('jsonPayloadForm.html', {
+    title: 'Create Item',
+    submitUrl: '/items/submit/item',
+    submitLabel: 'Save',
+    exampleRequest: {
+      "ItemCategory": "Buds",
+      "Name": "Buds Item",
+      "UnitOfMeasure": "Ounces",
+      "Strain": "Spring Hill Kush",
+      "UnitThcContent": null,
+      "UnitThcContentUnitOfMeasure": null,
+      "UnitWeight": null,
+      "UnitWeightUnitOfMeasure": null
+    }
+  })
 })
 
 router.post('/submit/item', function(req, res, next) {
@@ -38,6 +52,12 @@ router.post('/submit/item', function(req, res, next) {
 })
 
 router.get('/delete', function(req, res, next) {
+  res.render('singleFieldForm.html', {
+    label: 'Enter Item Id',
+    submitUrl: '/items/delete/item',
+    variableName: 'id',
+    sumbitLabel: 'Delete Item'
+  })
   res.render('deleteItemForm.html')
 })
 
@@ -51,7 +71,12 @@ router.post('/delete/item', function(req, res, next) {
 })
 
 router.get('/fetch', function(req, res, next) {
-  res.render('fetchItemForm.html')
+  res.render('singleFieldForm.html', {
+    label: 'Enter Item Id',
+    submitUrl: '/items/submit/fetch',
+    variableName: 'id',
+    submitLabel: 'Fetch Item'
+  })
 })
 
 router.post('/submit/fetch', function(req, res, next) {
@@ -64,7 +89,22 @@ router.post('/submit/fetch', function(req, res, next) {
 })
 
 router.get('/update', function(req, res, next) {
-  res.render('updateItemForm.html')
+  res.render('jsonPayloadForm.html', {
+    title: 'Update Item',
+    submitUrl: '/items/submit/update',
+    submitLabel: 'Update Item',
+    exampleRequest: {
+      "Id": 1,
+      "Name": "Buds Item",
+      "ItemCategory": "Buds",
+      "UnitOfMeasure": "Ounces",
+      "Strain": "String Hill Kush",
+      "UnitThcContent": null,
+      "UnitThcContentUnitOfMeasure": null,
+      "UnitWeight": null,
+      "UnitWeightUnitOfMeasure": null
+    }
+  })
 })
 
 router.post('/submit/update', function(req, res, next) {

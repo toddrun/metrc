@@ -1,0 +1,12 @@
+{% extends './layout.html' %}
+
+{% block body %}
+  <form method='post' action='{{submitUrl}}'>
+    <div>
+      <label for="{{variableName}}">{{label}}: </label><input type="text" name="{{variableName}}" /> 
+    </div>
+    <div>
+      <input type="submit" value="{{submitLabel|default('Save')}}" />
+    </div>
+  </form>
+{% endblock %}
