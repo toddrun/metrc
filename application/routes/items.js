@@ -51,6 +51,45 @@ router.post('/submit/item', function(req, res, next) {
   })
 })
 
+router.get('/bulkcreate', function(req, res, next) {
+  res.render('jsonPayloadForm.html', {
+    title: 'Create Multiple Items',
+    submitUrl: '/items/submit/bulkitems',
+    submitLabel: 'Save',
+    exampleRequest: [
+      {
+        "ItemCategory": "Buds",
+        "Name": "Buds Item",
+        "UnitOfMeasure": "Ounces",
+        "Strain": "Spring Hill Kush",
+        "UnitThcContent": null,
+        "UnitThcContentUnitOfMeasure": null,
+        "UnitWeight": null,
+        "UnitWeightUnitOfMeasure": null
+      },
+      {
+        "ItemCategory": "Infused (edible)",
+        "Name": "Infused Item",
+        "UnitOfMeasure": "Each",
+        "Strain": null,
+        "UnitThcContent": 10.0,
+        "UnitThcContentUnitOfMeasure": "Milligrams",
+        "UnitWeight": 150.0,
+        "UnitWeightUnitOfMeasure": "Milligrams"
+      }
+    ]
+  })
+})
+
+router.post('/submit/bulkitems', function(req, res, next) {
+  const payload = JSON.parse(req.body.payload)
+  metrcItems.bulkCreate(payload).then((results) => {
+    res.send(render(results))
+  }).catch((err) => {
+    res.send(err)
+  })
+})
+
 router.get('/delete', function(req, res, next) {
   res.render('singleFieldForm.html', {
     label: 'Enter Item Id',
@@ -58,7 +97,6 @@ router.get('/delete', function(req, res, next) {
     variableName: 'id',
     sumbitLabel: 'Delete Item'
   })
-  res.render('deleteItemForm.html')
 })
 
 router.post('/delete/item', function(req, res, next) {

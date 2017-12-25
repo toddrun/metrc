@@ -2,6 +2,7 @@
 
 const MetrcItems = require('../lib/MetrcItems')
 const Metrc = require('../lib/Metrc')
+const attributeInspector = require('../lib/helpers/attributeInspector')
 
 const sinon = require('sinon')
 const assert = require('assert')
@@ -10,9 +11,16 @@ describe('MetrcItems', () => {
   const metrc = new Metrc()
   const metrcItems = new MetrcItems(metrc)
   let mockMetrc;
-
-  beforeEach(() => { mockMetrc = sinon.mock(metrc); })
-  afterEach(() => { mockMetrc.restore(); })
+  let mockAttributeInspector
+    
+  beforeEach(() => {
+    mockMetrc = sinon.mock(metrc)
+    mockAttributeInspector = sinon.mock(attributeInspector)
+  })
+  afterEach(() => { 
+    mockMetrc.restore(); 
+    mockAttributeInspector.restore();
+  })
   
   describe('fetch', () => {
     const id = 212
@@ -46,9 +54,9 @@ describe('MetrcItems', () => {
      })
     })
     
-    it('gets the Item with the same name and greatest id', (done) => {
+    it('gets the Item with the same name', (done) => {
       const activeItems = [ 
-        { "Id": 4, "Name": itemName }, 
+        { "Id": 4, "Name": 'Some Name' }, 
         { "Id": 7, "Name": itemName}, 
         { "Id": 12, "Name": "Something else"}
       ]
@@ -60,6 +68,33 @@ describe('MetrcItems', () => {
        assert.equal(newItem.Id, 7)
        done();
      }).catch((err) => {console.log(err)})
+    })
+  })
+  
+  describe('bulkCreate', () => {
+    const payload = [ {'Name': 'name1'}, {'name': 'name2'} ]
+    const identifiers = ['name1', 'name2']
+    const allItems = [ {'Id': 7}, {'Id': 9} ]
+    const selectedItems = [ {'Id': 5, 'Name': 'name1'}, {'Id': 9, 'Name': 'name2'} ]
+   
+    
+    it('extracts values', (done) => {
+      mockAttributeInspector
+        .expects('extractValues')
+        .withArgs('Name', payload)
+        .returns(identifiers)
+      mockAttributeInspector
+        .expects('findMatches')
+        .withArgs('Name', identifiers, allItems)
+        .returns(selectedItems)
+      mockMetrc.expects('post').resolves("OK")
+      mockMetrc.expects('get').resolves(allItems)
+      
+      metrcItems.bulkCreate(payload).then((results) => {
+        mockAttributeInspector.verify();
+        assert.deepEqual(results, selectedItems)
+        done();
+      })
     })
   })
   
