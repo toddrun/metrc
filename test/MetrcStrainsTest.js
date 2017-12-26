@@ -2,6 +2,7 @@
 
 const MetrcStrains = require('../lib/MetrcStrains')
 const Metrc = require('../lib/Metrc')
+const attributeInspector = require('../lib/helpers/attributeInspector')
 
 const sinon = require('sinon')
 const assert = require('assert')
@@ -10,9 +11,16 @@ describe('MetrcStrains', () => {
   const metrc = new Metrc()
   const metrcStrains = new MetrcStrains(metrc)
   let mockMetrc;
+  let mockAttributeInspector
 
-  beforeEach(() => { mockMetrc = sinon.mock(metrc); })
-  afterEach(() => { mockMetrc.restore(); })
+  beforeEach(() => {
+    mockMetrc = sinon.mock(metrc)
+    mockAttributeInspector = sinon.mock(attributeInspector)
+  })
+  afterEach(() => { 
+    mockMetrc.restore(); 
+    mockAttributeInspector.restore();
+  })
   
   describe('create', () => {
     const strainName = "Stinky Skunk"
@@ -46,6 +54,32 @@ describe('MetrcStrains', () => {
        assert.equal(newStrain.Id, 7)
        done();
      })
+    })
+  })
+  
+  describe('bulkCreate', () => {
+    const payload = [ {'Name': 'name1'}, {'name': 'name2'} ]
+    const identifiers = ['name1', 'name2']
+    const allStrains = [ {'Id': 7}, {'Id': 9} ]
+    const selectedStrains = [ {'Id': 5, 'Name': 'name1'}, {'Id': 9, 'Name': 'name2'} ]
+   
+    it('extracts values', (done) => {
+      mockAttributeInspector
+        .expects('extractValues')
+        .withArgs('Name', payload)
+        .returns(identifiers)
+      mockAttributeInspector
+        .expects('findMatches')
+        .withArgs('Name', identifiers, allStrains)
+        .returns(selectedStrains)
+      mockMetrc.expects('post').resolves("OK")
+      mockMetrc.expects('get').resolves(allStrains)
+      
+      metrcStrains.bulkCreate(payload).then((results) => {
+        mockAttributeInspector.verify();
+        assert.deepEqual(results, selectedStrains)
+        done();
+      })
     })
   })
   
@@ -103,6 +137,33 @@ describe('MetrcStrains', () => {
        assert.equal(updatedStrain, payload)
        done();
      })
+    })
+  })
+  
+  describe('bulkUpdate', () => {
+    const payload = [ 
+      {'Id': 7, 'Name': 'name1'}, {'Id': 9, 'name': 'name2'} ]
+    const ids = [7, 9]
+    const allStrains = [ {'Id': 7}, {'Id': 9} ]
+    const matchingStrains = [ {'Id': 7, 'Name': 'name1'}, {'Id': 9, 'Name': 'name2'} ]
+   
+    it('extracts values', (done) => {
+      mockAttributeInspector
+        .expects('extractValues')
+        .withArgs('Id', payload)
+        .returns(ids)
+      mockAttributeInspector
+        .expects('findMatches')
+        .withArgs('Id', ids, allStrains)
+        .returns(matchingStrains)
+      mockMetrc.expects('post').resolves("OK")
+      mockMetrc.expects('get').resolves(allStrains)
+      
+      metrcStrains.bulkUpdate(payload).then((results) => {
+        mockAttributeInspector.verify();
+        assert.deepEqual(results, matchingStrains)
+        done();
+      })
     })
   })
   

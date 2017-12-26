@@ -43,6 +43,41 @@ router.post('/submit/strain', function(req, res, next) {
   })
 })
 
+router.get('/bulkcreate', function(req, res, next) {
+  res.render('jsonPayloadForm.html', {
+    title: 'Create Multiple Strains',
+    submitUrl: '/strains/submit/bulkstrain',
+    submitLabel: 'Create Strains',
+    exampleRequest: [
+      {
+        "Name": "Spring Hill Kush",
+        "TestingStatus": "None",
+        "ThcLevel": 0.1865,
+        "CbdLevel": 0.1075,
+        "IndicaPercentage": 25.0,
+        "SativaPercentage": 75.0
+      },
+      {
+        "Name": "TN Orange Dream",
+        "TestingStatus": "None",
+        "ThcLevel": 0.075,
+        "CbdLevel": 0.14,
+        "IndicaPercentage": 25.0,
+        "SativaPercentage": 75.0
+      }
+    ]
+  })
+})
+
+router.post('/submit/bulkstrain', function(req, res, next) {
+  const payload = JSON.parse(req.body.payload)
+  metrcStrains.bulkCreate(payload).then((results) => {
+    res.send(render(results))
+  }).catch((err) => {
+    res.send(err)
+  })
+})
+
 router.get('/delete', function(req, res, next) {
   res.render('singleFieldForm.html', {
     label: 'Enter Strain Id',
@@ -99,6 +134,45 @@ router.get('/update', function(req, res, next) {
 router.post('/submit/update', function(req, res, next) {
   const payload = JSON.parse(req.body.payload)
   metrcStrains.update(payload).then((results) => {
+    res.send(render(results));
+  }).catch((err) => {
+    res.send(err)
+  })
+})
+
+router.get('/bulkupdate', function(req, res, next) {
+  res.render('jsonPayloadForm.html', {
+    title: 'Update Multiple Strains',
+    submitUrl: '/strains/submit/bulkupdate',
+    submitLabel: 'Update Strains',
+    exampleRequest: [
+      {
+        "Id": 1,
+        "Name": "Spring Hill Kush",
+        "TestingStatus": "InHouse",
+        "ThcLevel": 0.1865,
+        "CbdLevel": 0.1075,
+        "IndicaPercentage": 25.0,
+        "SativaPercentage": 75.0
+      },
+      {
+        "Id": 2,
+        "Name": "TN Orange Dream",
+        "TestingStatus": "ThirdParty",
+        "ThcLevel": 0.075,
+        "CbdLevel": 0.14,
+        "IndicaPercentage": 25.0,
+        "SativaPercentage": 75.0
+      }
+    ]
+  })
+})
+
+router.post('/submit/bulkupdate', function(req, res, next) {
+  console.log("Here")
+  const payload = JSON.parse(req.body.payload)
+  console.log("There")
+  metrcStrains.bulkUpdate(payload).then((results) => {
     res.send(render(results));
   }).catch((err) => {
     res.send(err)
