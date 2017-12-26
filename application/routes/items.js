@@ -154,4 +154,45 @@ router.post('/submit/update', function(req, res, next) {
   })
 })
 
+router.get('/bulkupdate', function(req, res, next) {
+  res.render('jsonPayloadForm.html', {
+    title: 'Update Multiple Items',
+    submitUrl: '/items/submit/bulkupdate',
+    submitLabel: 'Update',
+    exampleRequest: [
+      {
+        "Id": 1,
+        "Name": "Buds Item",
+        "ItemCategory": "Buds",
+        "UnitOfMeasure": "Ounces",
+        "Strain": "String Hill Kush",
+        "UnitThcContent": null,
+        "UnitThcContentUnitOfMeasure": null,
+        "UnitWeight": null,
+        "UnitWeightUnitOfMeasure": null
+      },
+      {
+        "Id": 2,
+        "Name": "Concentrate (Each)",
+        "ItemCategory": "Concentrate (Each)",
+        "UnitOfMeasure": "Each",
+        "Strain": null,
+        "UnitThcContent": 10.0,
+        "UnitThcContentUnitOfMeasure": "Milligrams",
+        "UnitWeight": 100.0,
+        "UnitWeightUnitOfMeasure": "Milligrams"
+      }
+    ]
+  })
+})
+
+router.post('/submit/bulkupdate', function(req, res, next) {
+  const payload = JSON.parse(req.body.payload)
+  metrcItems.bulkUpdate(payload).then((results) => {
+    res.send(render(results))
+  }).catch((err) => {
+    res.send(err)
+  })
+})
+
 module.exports = router;

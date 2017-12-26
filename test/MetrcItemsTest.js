@@ -77,7 +77,6 @@ describe('MetrcItems', () => {
     const allItems = [ {'Id': 7}, {'Id': 9} ]
     const selectedItems = [ {'Id': 5, 'Name': 'name1'}, {'Id': 9, 'Name': 'name2'} ]
    
-    
     it('extracts values', (done) => {
       mockAttributeInspector
         .expects('extractValues')
@@ -113,6 +112,34 @@ describe('MetrcItems', () => {
      metrcItems.update(payload).then((newPackage) => {
        mockMetrc.verify();
        assert.equal(newPackage, payload)
+       done();
+     })
+    })
+  })
+  
+  describe('bulkUpdate', () => {
+    const payload = [ 
+      {'Id': 420, 'Name': 'name1'}, {'Id': 521, 'name': 'name2'} 
+    ]
+    const ids = [420, 521]
+    const allItems = [ {'Id': 420}, {'Id': 521} ]
+    const selectedItems = [ {'Id': 420, 'Name': '1'}, {'Id': 521, 'Name': '2'} ]
+    
+    it('posts item to update endpoint then fetches the item', (done) => {
+      mockAttributeInspector
+        .expects('extractValues')
+        .withArgs('Id', payload)
+        .returns(ids)
+      mockAttributeInspector
+        .expects('findMatches')
+        .withArgs('Id', ids, allItems)
+        .returns(selectedItems)
+      mockMetrc.expects('post').resolves("OK")
+      mockMetrc.expects('get').resolves(allItems)
+     
+     metrcItems.bulkUpdate(payload).then((results) => {
+       mockMetrc.verify();
+       assert.equal(results, selectedItems)
        done();
      })
     })
