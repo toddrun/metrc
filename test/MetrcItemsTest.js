@@ -2,7 +2,6 @@
 
 const MetrcItems = require('../lib/MetrcItems')
 const Metrc = require('../lib/Metrc')
-const attributeInspector = require('../lib/helpers/attributeInspector')
 const bulkHandler = require('../lib/helpers/bulkHandler')
 
 const sinon = require('sinon')
@@ -19,8 +18,8 @@ describe('MetrcItems', () => {
     mockBulkHandler = sinon.stub(bulkHandler, 'perform')
   })
   afterEach(() => { 
-    mockMetrc.restore(); 
-    mockBulkHandler.restore();
+    mockMetrc.restore()
+    mockBulkHandler.restore()
   })
   
   describe('fetch', () => {

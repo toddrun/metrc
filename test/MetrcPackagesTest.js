@@ -2,6 +2,8 @@
 
 const MetrcPackages = require('../lib/MetrcPackages')
 const Metrc = require('../lib/Metrc')
+const attributeInspector = require('../lib/helpers/attributeInspector')
+const bulkHandler = require('../lib/helpers/bulkHandler')
 
 const sinon = require('sinon')
 const assert = require('assert')
@@ -9,10 +11,20 @@ const assert = require('assert')
 describe('Packages', () => {
   const metrc = new Metrc()
   const metrcPackages = new MetrcPackages(metrc)
-  let mockMetrc;
+  let mockMetrc
+  let mockAttributeInspector
+  let mockBulkHandler
 
-  beforeEach(() => { mockMetrc = sinon.mock(metrc); })
-  afterEach(() => { mockMetrc.restore(); })
+  beforeEach(() => { 
+    mockMetrc = sinon.mock(metrc)
+    mockAttributeInspector = sinon.mock(attributeInspector)
+    mockBulkHandler = sinon.stub(bulkHandler, 'perform')
+  })
+  afterEach(() => { 
+    mockMetrc.restore()
+    mockAttributeInspector.restore()
+    mockBulkHandler.restore()
+  })
   
   describe('create', () => {
     const tag = "ABCDEFG900001"
@@ -41,6 +53,35 @@ describe('Packages', () => {
        assert.equal(newPackage, createdPackage)
        done();
      })
+    })
+  })
+  
+  describe('bulkCreate', () => {
+    const payload = [{'Tag': 'ABC'}, {'Tag': '123'}]
+    const extractedTags = ['ABC', '123']
+    const allActive = [
+      {'Id': 3, 'Label': '000'}, {'Id': 6, 'Label': 'ABC'}, {'Id': 9, 'Label': '123'}
+    ]
+    const returnValue = [{'Id': 6, 'Label': 'ABC'}, {'Id': 9, 'Label': '123'}]
+    
+    it('extracts Tags and then matches Label', (done) => {
+      mockAttributeInspector
+        .expects('extractValues')
+        .withArgs('Tag', payload)
+        .returns(extractedTags)
+      mockAttributeInspector
+        .expects('findMatches')
+        .withArgs('Label', extractedTags, allActive)
+        .returns(returnValue)
+      mockMetrc.expects('post').resolves('Ok')
+      mockMetrc.expects('get').resolves(allActive)
+      
+      metrcPackages.bulkCreate(payload).then((results) => {
+        mockAttributeInspector.verify()
+        mockMetrc.verify()
+        assert.equal(results, returnValue)
+        done()
+      })
     })
   })
   

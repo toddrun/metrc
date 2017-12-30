@@ -99,6 +99,69 @@ router.post('/submit/create', function(req, res, next) {
   })
 })
 
+router.get('/bulkcreate', function(req, res, next) {
+  res.render('jsonPayloadForm.html', {
+    title: 'Create Multiple Packages',
+    submitUrl: '/packages/submit/bulkcreate',
+    submitLabel: 'Create Multiple Package',
+    exampleRequest: [
+      {
+        "Tag": "ABCDEF012345670000020201",
+        "Item": "Buds",
+        "Quantity": 16.0,
+        "UnitOfMeasure": "Ounces",
+        "IsProductionBatch": false,
+        "ProductionBatchNumber": null,
+        "ProductRequiresRemediation": false,
+        "ActualDate": "2015-12-15",
+        "Ingredients": [
+          {
+            "Package": "ABCDEF012345670000010041",
+            "Quantity": 8.0,
+            "UnitOfMeasure": "Ounces"
+          },
+          {
+            "Package": "ABCDEF012345670000010042",
+            "Quantity": 8.0,
+            "UnitOfMeasure": "Ounces"
+          }
+        ]
+      },
+      {
+        "Tag": "ABCDEF012345670000020202",
+        "Item": "Buds",
+        "Quantity": 16.0,
+        "UnitOfMeasure": "Ounces",
+        "IsProductionBatch": true,
+        "ProductionBatchNumber": "PB-2015-12-15",
+        "ProductRequiresRemediation": false,
+        "ActualDate": "2015-12-15",
+        "Ingredients": [
+          {
+            "Package": "ABCDEF012345670000010043",
+            "Quantity": 8.0,
+            "UnitOfMeasure": "Ounces"
+          },
+          {
+            "Package": "ABCDEF012345670000010044",
+            "Quantity": 8.0,
+            "UnitOfMeasure": "Ounces"
+          }
+        ]
+      }
+    ]
+  })
+})
+
+router.post('/submit/bulkcreate', function(req, res, next) {
+  const payload = JSON.parse(req.body.payload)
+  metrcPackages.bulkcreate(payload).then((results) => {
+    res.send(render(results))
+  }).catch((err) => {
+    res.send(err)
+  })
+})
+
 router.get('/changeItem', function(req, res, next) {
   res.render('jsonPayloadForm.html', {
     title: 'Change Package\'s Item',
