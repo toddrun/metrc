@@ -3,6 +3,7 @@
 const MetrcItems = require('../lib/MetrcItems')
 const Metrc = require('../lib/Metrc')
 const attributeInspector = require('../lib/helpers/attributeInspector')
+const bulkHandler = require('../lib/helpers/bulkHandler')
 
 const sinon = require('sinon')
 const assert = require('assert')
@@ -11,15 +12,15 @@ describe('MetrcItems', () => {
   const metrc = new Metrc()
   const metrcItems = new MetrcItems(metrc)
   let mockMetrc;
-  let mockAttributeInspector
+  let mockBulkHandler
     
   beforeEach(() => {
     mockMetrc = sinon.mock(metrc)
-    mockAttributeInspector = sinon.mock(attributeInspector)
+    mockBulkHandler = sinon.stub(bulkHandler, 'perform')
   })
   afterEach(() => { 
     mockMetrc.restore(); 
-    mockAttributeInspector.restore();
+    mockBulkHandler.restore();
   })
   
   describe('fetch', () => {
@@ -73,25 +74,21 @@ describe('MetrcItems', () => {
   
   describe('bulkCreate', () => {
     const payload = [ {'Name': 'name1'}, {'name': 'name2'} ]
-    const identifiers = ['name1', 'name2']
-    const allItems = [ {'Id': 7}, {'Id': 9} ]
-    const selectedItems = [ {'Id': 5, 'Name': 'name1'}, {'Id': 9, 'Name': 'name2'} ]
-   
-    it('extracts values', (done) => {
-      mockAttributeInspector
-        .expects('extractValues')
-        .withArgs('Name', payload)
-        .returns(identifiers)
-      mockAttributeInspector
-        .expects('findMatches')
-        .withArgs('Name', identifiers, allItems)
-        .returns(selectedItems)
-      mockMetrc.expects('post').resolves("OK")
-      mockMetrc.expects('get').resolves(allItems)
-      
+    const returnValue = [ {'Id': 5, 'Name': 'name1'}, {'Id': 9, 'Name': 'name2'} ]
+    
+    it('leverages bulkHandler', (done) => {
+      mockBulkHandler.resolves(returnValue)
       metrcItems.bulkCreate(payload).then((results) => {
-        mockAttributeInspector.verify();
-        assert.deepEqual(results, selectedItems)
+        const args = mockBulkHandler.getCall(0).args
+        const instructions = args[0]
+        
+        assert.equal(instructions.attributeName, 'Name')
+        assert.ok(instructions.post.toString().indexOf('post'))
+        assert.ok(instructions.post.toString().indexOf('create'))
+        assert.ok(instructions.get.toString().indexOf('get'))
+        assert.ok(instructions.get.toString().indexOf('active'))
+        assert.equal(args[1], payload)
+        assert.deepEqual(results, returnValue)
         done();
       })
     })
@@ -121,27 +118,23 @@ describe('MetrcItems', () => {
     const payload = [ 
       {'Id': 420, 'Name': 'name1'}, {'Id': 521, 'name': 'name2'} 
     ]
-    const ids = [420, 521]
-    const allItems = [ {'Id': 420}, {'Id': 521} ]
-    const selectedItems = [ {'Id': 420, 'Name': '1'}, {'Id': 521, 'Name': '2'} ]
+    const returnValue = [ {'Id': 420, 'Name': '1'}, {'Id': 521, 'Name': '2'} ]
     
-    it('posts item to update endpoint then fetches the item', (done) => {
-      mockAttributeInspector
-        .expects('extractValues')
-        .withArgs('Id', payload)
-        .returns(ids)
-      mockAttributeInspector
-        .expects('findMatches')
-        .withArgs('Id', ids, allItems)
-        .returns(selectedItems)
-      mockMetrc.expects('post').resolves("OK")
-      mockMetrc.expects('get').resolves(allItems)
-     
-     metrcItems.bulkUpdate(payload).then((results) => {
-       mockMetrc.verify();
-       assert.equal(results, selectedItems)
-       done();
-     })
+    it('leverage bulkHandler', (done) => {
+      mockBulkHandler.resolves(returnValue)
+      metrcItems.bulkUpdate(payload).then((results) => {
+        const args = mockBulkHandler.getCall(0).args
+        const instructions = args[0]
+        
+        assert.equal('Id', instructions.attributeName)
+        assert.ok(instructions.post.toString().indexOf('post'))
+        assert.ok(instructions.post.toString().indexOf('update'))
+        assert.ok(instructions.get.toString().indexOf('get'))
+        assert.ok(instructions.get.toString().indexOf('active'))
+        assert.equal(args[1], payload)
+        assert.equal(results, returnValue)
+        done();
+      }).catch ((err) => { console.log(err)})
     })
   })
   

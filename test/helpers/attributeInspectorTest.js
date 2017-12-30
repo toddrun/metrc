@@ -4,7 +4,7 @@ const attributeInspector = require('../../lib/helpers/attributeInspector')
 
 const assert = require('assert')
 
-describe('BulkHandler', () => {
+describe('attributeInspector', () => {
   const payload = [
     { "Id": 11, "Name": "Name 1", "Label": "Label 1"},
     { "Id": 22, "Name": "Name 2", "Label": "Label 2"},

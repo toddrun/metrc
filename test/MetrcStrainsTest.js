@@ -2,7 +2,7 @@
 
 const MetrcStrains = require('../lib/MetrcStrains')
 const Metrc = require('../lib/Metrc')
-const attributeInspector = require('../lib/helpers/attributeInspector')
+const bulkHandler = require('../lib/helpers/bulkHandler')
 
 const sinon = require('sinon')
 const assert = require('assert')
@@ -10,16 +10,16 @@ const assert = require('assert')
 describe('MetrcStrains', () => {
   const metrc = new Metrc()
   const metrcStrains = new MetrcStrains(metrc)
-  let mockMetrc;
-  let mockAttributeInspector
+  let mockMetrc
+  let mockBulkHandler
 
   beforeEach(() => {
     mockMetrc = sinon.mock(metrc)
-    mockAttributeInspector = sinon.mock(attributeInspector)
+    mockBulkHandler = sinon.stub(bulkHandler, 'perform')  
   })
   afterEach(() => { 
-    mockMetrc.restore(); 
-    mockAttributeInspector.restore();
+    mockMetrc.restore()
+    mockBulkHandler.restore()
   })
   
   describe('create', () => {
@@ -58,26 +58,24 @@ describe('MetrcStrains', () => {
   })
   
   describe('bulkCreate', () => {
-    const payload = [ {'Name': 'name1'}, {'name': 'name2'} ]
-    const identifiers = ['name1', 'name2']
-    const allStrains = [ {'Id': 7}, {'Id': 9} ]
-    const selectedStrains = [ {'Id': 5, 'Name': 'name1'}, {'Id': 9, 'Name': 'name2'} ]
-   
-    it('extracts values', (done) => {
-      mockAttributeInspector
-        .expects('extractValues')
-        .withArgs('Name', payload)
-        .returns(identifiers)
-      mockAttributeInspector
-        .expects('findMatches')
-        .withArgs('Name', identifiers, allStrains)
-        .returns(selectedStrains)
-      mockMetrc.expects('post').resolves("OK")
-      mockMetrc.expects('get').resolves(allStrains)
+    it('leverages bulkHandler', (done) => {
+      const payload = [{'Name': 'Some Strain'}, {'Name': 'Another Strain'}]
+      const returnValue = [
+        {'Id': 17, 'Name': 'Some Strain'}, {'Id': 19, 'Name': 'Another Strain'}
+      ]
+      mockBulkHandler.resolves(returnValue)
       
       metrcStrains.bulkCreate(payload).then((results) => {
-        mockAttributeInspector.verify();
-        assert.deepEqual(results, selectedStrains)
+        const args = mockBulkHandler.getCall(0).args
+        const instructions = args[0]
+        
+        assert.equal('Name', instructions.attributeName)
+        assert.ok(instructions.post.toString().indexOf('post'))
+        assert.ok(instructions.post.toString().indexOf('create'))
+        assert.ok(instructions.post.toString().indexOf('get'))
+        assert.ok(instructions.post.toString().indexOf('active'))
+        assert.equal(args[1], payload)
+        assert.deepEqual(results, returnValue)
         done();
       })
     })
@@ -141,27 +139,24 @@ describe('MetrcStrains', () => {
   })
   
   describe('bulkUpdate', () => {
-    const payload = [ 
-      {'Id': 7, 'Name': 'name1'}, {'Id': 9, 'name': 'name2'} ]
-    const ids = [7, 9]
-    const allStrains = [ {'Id': 7}, {'Id': 9} ]
-    const matchingStrains = [ {'Id': 7, 'Name': 'name1'}, {'Id': 9, 'Name': 'name2'} ]
-   
-    it('extracts values', (done) => {
-      mockAttributeInspector
-        .expects('extractValues')
-        .withArgs('Id', payload)
-        .returns(ids)
-      mockAttributeInspector
-        .expects('findMatches')
-        .withArgs('Id', ids, allStrains)
-        .returns(matchingStrains)
-      mockMetrc.expects('post').resolves("OK")
-      mockMetrc.expects('get').resolves(allStrains)
+    it('leverages bulkHandler', (done) => {
+      const payload = [ 
+        {'Id': 7, 'Name': 'name1'}, {'Id': 9, 'name': 'name2'} 
+      ]
+      const returnValue = [ {'Id': 7, 'Name': 'name1'}, {'Id': 9, 'Name': 'name2'} ]
+      mockBulkHandler.resolves(returnValue)
       
       metrcStrains.bulkUpdate(payload).then((results) => {
-        mockAttributeInspector.verify();
-        assert.deepEqual(results, matchingStrains)
+        const args = mockBulkHandler.getCall(0).args
+        const instructions = args[0]
+        
+        assert.equal('Id', instructions.attributeName)
+        assert.ok(instructions.post.toString().indexOf('post'))
+        assert.ok(instructions.post.toString().indexOf('update'))
+        assert.ok(instructions.post.toString().indexOf('get'))
+        assert.ok(instructions.post.toString().indexOf('active'))
+        assert.equal(args[1], payload)
+        assert.deepEqual(results, returnValue)
         done();
       })
     })
