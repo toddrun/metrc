@@ -73,7 +73,7 @@ describe('Packages', () => {
         .expects('findMatches')
         .withArgs('Label', extractedTags, allActive)
         .returns(returnValue)
-      mockMetrc.expects('post').resolves('Ok')
+      mockMetrc.expects('post').withArgs('/packages/v1/create').resolves('Ok')
       mockMetrc.expects('get').resolves(allActive)
       
       metrcPackages.bulkCreate(payload).then((results) => {
@@ -112,6 +112,94 @@ describe('Packages', () => {
        assert.equal(newPackage, createdPackage)
        done();
      })
+    })
+  })
+  
+  describe('bulkCreateTesting', () => {
+    const payload = [{'Tag': 'ABC'}, {'Tag': '123'}]
+    const extractedTags = ['ABC', '123']
+    const allActive = [
+      {'Id': 3, 'Label': '000'}, {'Id': 6, 'Label': 'ABC'}, {'Id': 9, 'Label': '123'}
+    ]
+    const returnValue = [{'Id': 6, 'Label': 'ABC'}, {'Id': 9, 'Label': '123'}]
+    
+    it('extracts Tags and then matches Label', (done) => {
+      mockAttributeInspector
+        .expects('extractValues')
+        .withArgs('Tag', payload)
+        .returns(extractedTags)
+      mockAttributeInspector
+        .expects('findMatches')
+        .withArgs('Label', extractedTags, allActive)
+        .returns(returnValue)
+      mockMetrc.expects('post').withArgs('/packages/v1/create/testing').resolves('Ok')
+      mockMetrc.expects('get').withArgs('/packages/v1/active').resolves(allActive)
+      
+      metrcPackages.bulkCreateTesting(payload).then((results) => {
+        mockAttributeInspector.verify()
+        mockMetrc.verify()
+        assert.equal(results, returnValue)
+        done()
+      })
+    })
+  })
+  
+  describe('createPlantings', () => {
+    const tag = "ABCDEFG900001"
+    const payload = { "PackageLabel": tag }
+    
+    it('calls Metrc.post with packages create endpoint', (done) => {
+      mockMetrc.expects('post').
+        withArgs('/packages/v1/create/plantings', payload).
+        resolves("OK")
+      mockMetrc.expects('get').
+        withArgs('/packages/v1/' + tag).
+        resolves([])
+     
+     metrcPackages.createPlantings(payload).then((newPackage) => {
+       mockMetrc.verify();
+       done();
+     })
+    })
+    
+    it('gets the Package after creation using the Tag', (done) => {
+      const createdPackage = { "Label": tag }
+      mockMetrc.expects('post').resolves("OK")
+      mockMetrc.expects('get').resolves(createdPackage)
+     
+     metrcPackages.createPlantings(payload).then((newPackage) => {
+       assert.equal(newPackage, createdPackage)
+       done();
+     })
+    })
+  })
+  
+  describe('bulkCreatePlantings', () => {
+    const payload = [{'PlantingLabel': 'ABC'}, {'PlantingLabel': '123'}]
+    const extractedTags = ['ABC', '123']
+    const allActive = [
+      {'Id': 3, 'Label': '000'}, {'Id': 6, 'Label': 'ABC'}, {'Id': 9, 'Label': '123'}
+    ]
+    const returnValue = [{'Id': 6, 'Label': 'ABC'}, {'Id': 9, 'Label': '123'}]
+    
+    it('extracts Tags and then matches Label', (done) => {
+      mockAttributeInspector
+        .expects('extractValues')
+        .withArgs('PlantingLabel', payload)
+        .returns(extractedTags)
+      mockAttributeInspector
+        .expects('findMatches')
+        .withArgs('Label', extractedTags, allActive)
+        .returns(returnValue)
+      mockMetrc.expects('post').withArgs('/packages/v1/create/plantings').resolves('Ok')
+      mockMetrc.expects('get').withArgs('/packages/v1/active').resolves(allActive)
+      
+      metrcPackages.bulkCreatePlantings(payload).then((results) => {
+        mockAttributeInspector.verify()
+        mockMetrc.verify()
+        assert.equal(results, returnValue)
+        done()
+      })
     })
   })
   

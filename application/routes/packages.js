@@ -103,7 +103,7 @@ router.get('/bulkcreate', function(req, res, next) {
   res.render('jsonPayloadForm.html', {
     title: 'Create Multiple Packages',
     submitUrl: '/packages/submit/bulkcreate',
-    submitLabel: 'Create Multiple Package',
+    submitLabel: 'Create Multiple Packages',
     exampleRequest: [
       {
         "Tag": "ABCDEF012345670000020201",
@@ -155,7 +155,175 @@ router.get('/bulkcreate', function(req, res, next) {
 
 router.post('/submit/bulkcreate', function(req, res, next) {
   const payload = JSON.parse(req.body.payload)
-  metrcPackages.bulkcreate(payload).then((results) => {
+  metrcPackages.bulkCreate(payload).then((results) => {
+    res.send(render(results))
+  }).catch((err) => {
+    res.send(err)
+  })
+})
+
+router.get('/createtesting', function(req, res, next) {
+  res.render('jsonPayloadForm.html', {
+    title: 'Create Testing Package',
+    submitUrl: '/packages/submit/createtesting',
+    submitLabel: 'Create Testing Package',
+    exampleRequest: {
+      "Tag": "ABCDEF012345670000020201",
+      "Item": "Buds",
+      "Quantity": 16.0,
+      "UnitOfMeasure": "Ounces",
+      "IsProductionBatch": false,
+      "ProductionBatchNumber": null,
+      "ProductRequiresRemediation": false,
+      "ActualDate": "2015-12-15",
+      "Ingredients": [
+        {
+          "Package": "ABCDEF012345670000010041",
+          "Quantity": 8.0,
+          "UnitOfMeasure": "Ounces"
+        },
+        {
+          "Package": "ABCDEF012345670000010042",
+          "Quantity": 8.0,
+          "UnitOfMeasure": "Ounces"
+        }
+      ]
+    }
+  })
+})
+
+router.post('/submit/createtesting', function(req, res, next) {
+  const payload = JSON.parse(req.body.payload)
+  metrcPackages.createTesting(payload).then((results) => {
+    res.send(render(results))
+  }).catch((err) => {
+    res.send(err)
+  })
+})
+
+router.get('/bulkcreatetesting', function(req, res, next) {
+  res.render('jsonPayloadForm.html', {
+    title: 'Create Multiple Testing Packages',
+    submitUrl: '/packages/submit/bulkcreatetesting',
+    submitLabel: 'Create Multiple Testing Packages',
+    exampleRequest: [
+      {
+        "Tag": "ABCDEF012345670000020201",
+        "Item": "Buds",
+        "Quantity": 16.0,
+        "UnitOfMeasure": "Ounces",
+        "IsProductionBatch": false,
+        "ProductionBatchNumber": null,
+        "ProductRequiresRemediation": false,
+        "ActualDate": "2015-12-15",
+        "Ingredients": [
+          {
+            "Package": "ABCDEF012345670000010041",
+            "Quantity": 8.0,
+            "UnitOfMeasure": "Ounces"
+          },
+          {
+            "Package": "ABCDEF012345670000010042",
+            "Quantity": 8.0,
+            "UnitOfMeasure": "Ounces"
+          }
+        ]
+      },
+      {
+        "Tag": "ABCDEF012345670000020202",
+        "Item": "Buds",
+        "Quantity": 16.0,
+        "UnitOfMeasure": "Ounces",
+        "IsProductionBatch": true,
+        "ProductionBatchNumber": "PB-2015-12-15",
+        "ProductRequiresRemediation": false,
+        "ActualDate": "2015-12-15",
+        "Ingredients": [
+          {
+            "Package": "ABCDEF012345670000010043",
+            "Quantity": 8.0,
+            "UnitOfMeasure": "Ounces"
+          },
+          {
+            "Package": "ABCDEF012345670000010044",
+            "Quantity": 8.0,
+            "UnitOfMeasure": "Ounces"
+          }
+        ]
+      }
+    ]
+  })
+})
+
+router.post('/submit/bulkcreatetesting', function(req, res, next) {
+  const payload = JSON.parse(req.body.payload)
+  metrcPackages.bulkCreateTesting(payload).then((results) => {
+    res.send(render(results))
+  }).catch((err) => {
+    res.send(err)
+  })
+})
+
+router.get('/createplantings', function(req, res, next) {
+  res.render('jsonPayloadForm.html', {
+    title: 'Create Plantings Package',
+    submitUrl: '/packages/submit/createplantings',
+    submitLabel: 'Create Plantings Package',
+    exampleRequest: {
+      "PackageLabel": "ABCDEF012345670000010041",
+      "PackageAdjustmentAmount": 2.0,
+      "PackageAdjustmentUnitOfMeasureName": "Ounces",
+      "PlantBatchName": "AK-47 Clone 1/31/2017",
+      "PlantBatchType": "Clone",
+      "PlantCount": 1,
+      "StrainName": "AK-47",
+      "PlantedDate": "2017-01-31T00:00:00Z"
+    }
+  })
+})
+
+router.post('/submit/createplantings', function(req, res, next) {
+  const payload = JSON.parse(req.body.payload)
+  metrcPackages.createPlantings(payload).then((results) => {
+    res.send(render(results))
+  }).catch((err) => {
+    res.send(err)
+  })
+})
+
+router.get('/bulkcreateplantings', function(req, res, next) {
+  res.render('jsonPayloadForm.html', {
+    title: 'Create Multiple Plantings Packages',
+    submitUrl: '/packages/submit/bulkcreateplantings',
+    submitLabel: 'Create Multiple Plantings Packages',
+    exampleRequest: [
+      {
+        "PackageLabel": "ABCDEF012345670000010041",
+        "PackageAdjustmentAmount": 2.0,
+        "PackageAdjustmentUnitOfMeasureName": "Ounces",
+        "PlantBatchName": "AK-47 Clone 1/31/2017",
+        "PlantBatchType": "Clone",
+        "PlantCount": 1,
+        "StrainName": "AK-47",
+        "PlantedDate": "2017-01-31T00:00:00Z"
+      },
+      {
+        "PackageLabel": "ABCDEF012345670000010042",
+        "PackageAdjustmentAmount": 4.0,
+        "PackageAdjustmentUnitOfMeasureName": "Ounces",
+        "PlantBatchName": "Flo Seed 1/31/2017",
+        "PlantBatchType": "Seed",
+        "PlantCount": 2,
+        "StrainName": "Flo",
+        "PlantedDate": "2017-01-31T00:00:00Z"
+      }
+    ]
+  })
+})
+
+router.post('/submit/bulkcreateplantings', function(req, res, next) {
+  const payload = JSON.parse(req.body.payload)
+  metrcPackages.bulkCreatePlantings(payload).then((results) => {
     res.send(render(results))
   }).catch((err) => {
     res.send(err)
