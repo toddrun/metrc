@@ -376,4 +376,68 @@ router.post('/submit/adjust', function(req, res, next) {
   })
 })
 
+router.get('/finish', function(req, res, next) {
+  res.render('jsonPayloadForm.html', {
+    title: 'Finish Package',
+    submitUrl: '/packages/submit/finish',
+    submitLabel: 'Finish Package',
+    exampleRequest: {
+      "Label": "ABCDEF012345670000010041",
+      "ActualDate": "2015-12-15"
+    }
+  })
+})
+
+router.post('/submit/finish', function(req, res, next) {
+  const payload = JSON.parse(req.body.payload)
+  metrcPackages.finish(payload).then((results) => {
+    res.send(render(results))
+  }).catch((err) => {
+    res.send(err)
+  })
+})
+
+router.get('/unfinish', function(req, res, next) {
+  res.render('jsonPayloadForm.html', {
+    title: 'Unfinish Package',
+    submitUrl: '/packages/submit/unfinish',
+    submitLabel: 'Unfinish Package',
+    exampleRequest: {
+      "Label": "ABCDEF012345670000010041"
+    }
+  })
+})
+
+router.post('/submit/unfinish', function(req, res, next) {
+  const payload = JSON.parse(req.body.payload)
+  metrcPackages.unfinish(payload).then((results) => {
+    res.send(render(results))
+  }).catch((err) => {
+    res.send(err)
+  })
+})
+
+router.get('/remediate', function(req, res, next) {
+  res.render('jsonPayloadForm.html', {
+    title: 'Remediate Package',
+    submitUrl: '/packages/submit/remediate',
+    submitLabel: 'Remediate Package',
+    exampleRequest: {
+      "PackageLabel": "ABCDEF012345670000020201",
+      "RemediationMethodName": "Further Drying",
+      "RemediationDate": "2016-10-17",
+      "RemediationSteps": "Used hair dryer"
+    }
+  })
+})
+
+router.post('/submit/remediate', function(req, res, next) {
+  const payload = JSON.parse(req.body.payload)
+  metrcPackages.remediate(payload).then((results) => {
+    res.send(render(results))
+  }).catch((err) => {
+    res.send(err)
+  })
+})
+
 module.exports = router;

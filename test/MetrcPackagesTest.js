@@ -347,6 +347,74 @@ describe('Packages', () => {
     })
   })
   
+  describe('finish', () => {
+    const label = "123456ABCDEF"
+    const payload = { Label: label, ActualDate: '2018-01-01' }
+    it('posts the payload then fetches the Package using the label', (done) => {
+      mockMetrc.expects('post').
+        withArgs('/packages/v1/finish').
+        resolves( payload )
+      mockMetrc.expects('get').
+        withArgs('/packages/v1/' + label).
+        resolves(payload)
+     
+      metrcPackages.finish(payload).then((results) => {
+        mockMetrc.verify();
+        assert.equal(results, payload)
+        done();
+      })
+    })
+  })
+  
+  describe('unfinish', () => {
+    const label = "123456ABCDEF"
+    const payload = { Label: label }
+    it('posts the payload then fetches the Package using the label', (done) => {
+      mockMetrc.expects('post').
+        withArgs('/packages/v1/unfinish').
+        resolves( payload )
+      mockMetrc.expects('get').
+        withArgs('/packages/v1/' + label).
+        resolves(payload)
+     
+      metrcPackages.unfinish(payload).then((results) => {
+        mockMetrc.verify();
+        assert.equal(results, payload)
+        done();
+      })
+    })
+  })
+  
+  describe('remediate', () => {
+    const tag = "ABCDEFG900001"
+    const payload = { "PackageLabel": tag }
+    
+    it('calls Metrc.post with packages remediate endpoint', (done) => {
+      mockMetrc.expects('post').
+        withArgs('/packages/v1/remediate', payload).
+        resolves("OK")
+      mockMetrc.expects('get').
+        withArgs('/packages/v1/' + tag).
+        resolves([])
+     
+     metrcPackages.remediate(payload).then((newPackage) => {
+       mockMetrc.verify();
+       done();
+     })
+    })
+    
+    it('gets the Package after creation using the Tag', (done) => {
+      const remediatedPackage = { "Label": tag }
+      mockMetrc.expects('post').resolves("OK")
+      mockMetrc.expects('get').resolves(remediatedPackage)
+     
+     metrcPackages.remediate(payload).then((newPackage) => {
+       assert.equal(newPackage, remediatedPackage)
+       done();
+     })
+    })
+  })
+  
   describe('types', () => {
     it('gets and returns payload from package types endpoint', (done) => {
       const typeArray = ["Product", "ImmaturePlant", "VegetativePlant"]
