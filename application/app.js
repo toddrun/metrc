@@ -10,6 +10,7 @@ const index = require('./routes/index');
 const packages = require('./routes/packages');
 const items = require('./routes/items');
 const strains = require('./routes/strains');
+const transfers = require('./routes/transfers');
 
 const swig = require("swig-templates");
 const cons = require("consolidate");
@@ -36,6 +37,7 @@ app.use('/', index);
 app.use('/packages', packages);
 app.use('/items', items);
 app.use('/strains', strains);
+app.use('/transfers', transfers);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
