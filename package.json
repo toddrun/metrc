@@ -2,7 +2,7 @@
   "name": "metrc",
   "version": "0.0.3",
   "description": "Interact with the Metrc API from your Node application",
-  "main": "lib/Metrc.js",
+  "main": "./lib/index",
   "scripts": {
     "test": "mocha --recursive"
   },
