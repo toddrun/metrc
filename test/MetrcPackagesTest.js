@@ -258,22 +258,46 @@ describe('Packages', () => {
   })
   
   describe('all', () => {
-    beforeEach(() => {
-      mockMetrc.expects('get').withArgs('/packages/v1/active').resolves([{"active": 1}])
-      mockMetrc.expects('get').withArgs('/packages/v1/inactive').resolves([{"inactive": 1}])
-    })
-    
-    it('gets active, inactive and onhold', (done) => {
-      metrcPackages.all().then((results) => {
-        mockMetrc.verify();
-        done();
+    context('without options', () => {
+      beforeEach(() => {
+        mockMetrc.expects('get').withArgs('/packages/v1/active').resolves([{"active": 1}])
+        mockMetrc.expects('get').withArgs('/packages/v1/inactive').resolves([{"inactive": 1}])
+      })
+
+      it('gets active, inactive and onhold', (done) => {
+        metrcPackages.all().then((results) => {
+          mockMetrc.verify();
+          done();
+        })
+      })
+
+      it('concatenates all the results', (done) => {
+        metrcPackages.all().then((results) => {
+          assert.deepEqual(results, [{"active": 1}, {"inactive": 1}])
+          done();
+        })
       })
     })
     
-    it('concatenates all the results', (done) => {
-      metrcPackages.all().then((results) => {
-        assert.deepEqual(results, [{"active": 1}, {"inactive": 1}])
-        done();
+    context('with options', () => {
+      let options = { lastModifiedStart: '2018-03-24T11:20:00Z' }
+      beforeEach(() => {
+        mockMetrc.expects('get').withArgs('/packages/v1/active', options).resolves([{"active": 2}])
+        mockMetrc.expects('get').withArgs('/packages/v1/inactive', options).resolves([{"inactive": 2}])
+      })
+
+      it('gets active, inactive and onhold', (done) => {
+        metrcPackages.all(options).then((results) => {
+          mockMetrc.verify();
+          done();
+        })
+      })
+
+      it('concatenates all the results', (done) => {
+        metrcPackages.all(options).then((results) => {
+          assert.deepEqual(results, [{"active": 2}, {"inactive": 2}])
+          done();
+        })
       })
     })
   })
@@ -299,6 +323,18 @@ describe('Packages', () => {
         done()
       })
     })
+    
+    context('with options', () => {
+      let options = { lastModifiedStart: '2018-03-24T11:20:00Z' }
+      
+      it('passes options', (done) => {
+        mockMetrc.expects('get').withArgs('/packages/v1/active', options).resolves([{"active": 2}])
+        metrcPackages.active(options).then((results) => {
+          mockMetrc.verify();
+          done();
+        })
+      })
+    })
   })
   
   describe('inactive', () => {
@@ -322,6 +358,18 @@ describe('Packages', () => {
         done()
       })
     })
+    
+    context('with options', () => {
+      let options = { lastModifiedStart: '2018-03-24T11:20:00Z' }
+      
+      it('passes options', (done) => {
+        mockMetrc.expects('get').withArgs('/packages/v1/inactive', options).resolves([{"active": 2}])
+        metrcPackages.inactive(options).then((results) => {
+          mockMetrc.verify();
+          done();
+        })
+      })
+    })
   })
   
   describe('onhold', () => {
@@ -343,6 +391,18 @@ describe('Packages', () => {
       metrcPackages.onhold().then((results) => {
         assert.equal(results, payload)
         done()
+      })
+    })
+    
+    context('with options', () => {
+      let options = { lastModifiedStart: '2018-03-24T11:20:00Z' }
+      
+      it('passes options', (done) => {
+        mockMetrc.expects('get').withArgs('/packages/v1/onhold', options).resolves([{"active": 2}])
+        metrcPackages.onhold(options).then((results) => {
+          mockMetrc.verify();
+          done();
+        })
       })
     })
   })
