@@ -1,6 +1,6 @@
 {
   "name": "metrc",
-  "version": "0.1.0",
+  "version": "0.0.8",
   "description": "Interact with the Metrc API from your Node application",
   "main": "./lib/index",
   "scripts": {
